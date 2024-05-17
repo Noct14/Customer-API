@@ -3,14 +3,46 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Info(
+ *     title="Customer API",
+ *     version="1.0.0",
+ *     description="API Documentation for Customer operations"
+ * )
+ */
+
+/**
+ * @OA\Schema(
+ *     schema="Customer",
+ *     type="object",
+ *     required={"name", "id_number", "dob", "email"},
+ *     @OA\Property(property="id", type="integer", readOnly=true),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="id_number", type="string"),
+ *     @OA\Property(property="dob", type="string", format="date"),
+ *     @OA\Property(property="email", type="string", format="email"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", readOnly=true),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", readOnly=true)
+ * )
+ */
 
 class CustomerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/customers",
+     *     summary="Get list of customers",
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of customers",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Customer"))
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -21,7 +53,19 @@ class CustomerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/customers",
+     *     summary="Create a new customer",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Customer")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Customer created",
+     *         @OA\JsonContent(ref="#/components/schemas/Customer")
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -37,7 +81,21 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/customers/{customer}",
+     *     summary="Get a specific customer",
+     *     @OA\Parameter(
+     *         name="customer",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Customer data",
+     *         @OA\JsonContent(ref="#/components/schemas/Customer")
+     *     )
+     * )
      */
     public function show(Customer $customer)
     {
@@ -47,7 +105,25 @@ class CustomerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/customers/{customer}",
+     *     summary="Update a customer",
+     *     @OA\Parameter(
+     *         name="customer",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Customer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Updated customer",
+     *         @OA\JsonContent(ref="#/components/schemas/Customer")
+     *     )
+     * )
      */
     public function update(Request $request, Customer $customer)
     {
@@ -63,7 +139,20 @@ class CustomerController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/customers/{customer}",
+     *     summary="Delete a customer",
+     *     @OA\Parameter(
+     *         name="customer",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Customer deleted"
+     *     )
+     * )
      */
     public function destroy(Customer $customer)
     {
